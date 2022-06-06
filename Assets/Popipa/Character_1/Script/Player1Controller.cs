@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using DG.Tweening;
@@ -10,8 +11,11 @@ public class Player1Controller : MonoBehaviour
 	[SerializeField] private float speed = 5f;
 	[SerializeField] private float jumpHeight = 5f;
 	[SerializeField] private Slider healthBar;
+	[SerializeField] private Slider obstacleHealthBar;
+	private float healthObstacle;
 	private int bar = 80000;
 	private Rigidbody2D _rigidbody2D;
+	private Boolean isObstacle;
 	
 	public Animator anim;
 
@@ -23,6 +27,7 @@ public class Player1Controller : MonoBehaviour
 	{
 		_rigidbody2D = GetComponent<Rigidbody2D>();
 		healthBar.DOValue(bar,1f);
+		healthObstacle = obstacleHealthBar.value;
 	}
 	 
 	public void Jump()
@@ -129,9 +134,20 @@ public class Player1Controller : MonoBehaviour
 			RunOff();
 			AttackOff();
 		}
-	} 
+	}
 
-
+	void OnCollisionEnter2D(Collision2D col)
+	{
+		if (col.collider.CompareTag("Obstacle"))
+		{
+			isObstacle = true;
+			Attack();
+			healthObstacle -= 1000;
+			obstacleHealthBar.DOValue(healthObstacle, 0.3f);
+			bar -= 10000;
+			healthBar.DOValue(bar, 0.3f);
+		}
+	}
 }
 
 
